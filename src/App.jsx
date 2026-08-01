@@ -3,36 +3,41 @@ import { ParticleBackground } from './components/ParticleBackground';
 import { TerminalView } from './components/TerminalView';
 import { BrowserPreview } from './components/BrowserPreview';
 import { SessionDbViewer } from './components/SessionDbViewer';
+import { LocalHistoryViewer } from './components/LocalHistoryViewer';
 import { ArtifactPanel } from './components/ArtifactPanel';
+import { SafetyConfirmationModal } from './components/SafetyConfirmationModal';
 import { agentEngine } from './services/agentEngine';
-import { Terminal, Database, FileText, Sparkles, Command } from 'lucide-react';
+import { Terminal, Database, FileText, Sparkles, Command, History } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('CONSOLE'); // 'CONSOLE' | 'DATABASE' | 'ARTIFACTS'
+  const [activeTab, setActiveTab] = useState('CONSOLE'); // 'CONSOLE' | 'DATABASE' | 'HISTORY' | 'ARTIFACTS'
   const [logs, setLogs] = useState([
     'AeroCLI v1.0.0 — Autonomous Terminal-to-Browser Agent Bridge',
-    'Interactive Localhost Controller online.',
+    'Interactive Localhost Control Center online.',
     'Move your cursor around to interact with the particle background mesh.',
-    'Type a task below or click a quick task preset to run.'
+    'Type a task below or click a quick preset to launch real file generation & verification.'
   ]);
+
   const [pendingPrompt, setPendingPrompt] = useState(null);
   const [pendingResolver, setPendingResolver] = useState(null);
+  const [executionPlan, setExecutionPlan] = useState([]);
   const [currentBrowserStep, setCurrentBrowserStep] = useState(null);
   const [browserResults, setBrowserResults] = useState(null);
   const [markdownArtifact, setMarkdownArtifact] = useState(null);
   const [isExecuting, setIsExecuting] = useState(false);
   const [mockMode, setMockMode] = useState(true);
+  const [currentTaskPrompt, setCurrentTaskPrompt] = useState('');
 
-  // Quick Preset Tasks
   const presets = [
+    'Create a contact form with email validation',
     'Add dark mode toggle to navigation bar and verify',
-    'Run Vitest test suite and check homepage rendering',
-    'Fix login button alignment and capture verification screenshot'
+    'Run Vitest test suite and check homepage rendering'
   ];
 
   const handleRunTask = async (taskPrompt) => {
     if (isExecuting) return;
     setIsExecuting(true);
+    setCurrentTaskPrompt(taskPrompt);
     setLogs((prev) => [...prev, `\n$ aerocli run "${taskPrompt}"`]);
     setBrowserResults(null);
     setCurrentBrowserStep(null);
@@ -42,6 +47,9 @@ export default function App() {
     await agentEngine.runAgentTask(taskPrompt, {
       onLog: (line) => {
         setLogs((prev) => [...prev, line]);
+      },
+      onPlanReady: (plan) => {
+        setExecutionPlan(plan);
       },
       onPermissionPrompt: (cmd) => {
         return new Promise((resolve) => {
@@ -71,11 +79,17 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-zinc-100 relative font-sans">
-      {/* Interactive Canvas Particle Background */}
+      {/* Granular Safety Confirmation Pop-up Modal */}
+      <SafetyConfirmationModal
+        pendingPrompt={pendingPrompt}
+        onResolvePrompt={handleResolvePrompt}
+      />
+
+      {/* Interactive Mouse Particle Canvas */}
       <ParticleBackground />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-6 space-y-6">
-        {/* Top Header Bar */}
+        {/* Header Bar */}
         <header className="glass-panel rounded-lg p-4 flex flex-col sm:flex-row items-center justify-between gap-4 border border-zinc-800">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-md bg-white text-black flex items-center justify-center font-bold font-mono shadow-lg">
@@ -94,7 +108,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Navigation Tabs */}
+          {/* Navigation Pills */}
           <div className="flex items-center gap-1.5 bg-zinc-950 p-1 rounded-md border border-zinc-800 font-mono text-xs">
             <button
               onClick={() => setActiveTab('CONSOLE')}
@@ -105,7 +119,7 @@ export default function App() {
               }`}
             >
               <Terminal className="w-3.5 h-3.5" />
-              Live Control
+              ⚡ Live Control
             </button>
 
             <button
@@ -117,7 +131,19 @@ export default function App() {
               }`}
             >
               <Database className="w-3.5 h-3.5" />
-              SQLite Session DB
+              💾 SQLite DB
+            </button>
+
+            <button
+              onClick={() => setActiveTab('HISTORY')}
+              className={`px-3 py-1.5 rounded transition-all flex items-center gap-1.5 ${
+                activeTab === 'HISTORY'
+                  ? 'bg-white text-black font-bold shadow'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              <History className="w-3.5 h-3.5" />
+              📜 Local History
             </button>
 
             <button
@@ -129,7 +155,7 @@ export default function App() {
               }`}
             >
               <FileText className="w-3.5 h-3.5" />
-              Artifact Inspector
+              📄 Artifact Inspector
             </button>
           </div>
         </header>
@@ -152,10 +178,9 @@ export default function App() {
           ))}
         </div>
 
-        {/* Main Content Area */}
+        {/* View Switching */}
         {activeTab === 'CONSOLE' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Terminal View */}
             <TerminalView
               logs={logs}
               pendingPrompt={pendingPrompt}
@@ -166,7 +191,6 @@ export default function App() {
               setMockMode={setMockMode}
             />
 
-            {/* Browser Preview View */}
             <BrowserPreview
               currentStep={currentBrowserStep}
               results={browserResults}
@@ -177,8 +201,15 @@ export default function App() {
 
         {activeTab === 'DATABASE' && <SessionDbViewer />}
 
+        {activeTab === 'HISTORY' && <LocalHistoryViewer />}
+
         {activeTab === 'ARTIFACTS' && (
-          <ArtifactPanel markdownArtifact={markdownArtifact} />
+          <ArtifactPanel
+            markdownArtifact={markdownArtifact}
+            executionPlan={executionPlan}
+            browserResults={browserResults}
+            taskPrompt={currentTaskPrompt}
+          />
         )}
       </div>
     </div>
