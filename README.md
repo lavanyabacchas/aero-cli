@@ -16,8 +16,8 @@ AeroCLI connects black-and-white CLI commands with live browser automation. It e
 5. 🧪 **Mock Fallback LLM Mode (`MOCK_AI=true`)**: Environment toggle allowing full offline execution with realistic pre-scripted JSON plans, terminal logs, and browser automation steps without needing an external API key.
 6. 🌐 **Browser Automation Bridge**: Playwright/Puppeteer automation simulator highlighting DOM elements, clicking buttons, and taking verification screenshot snapshots.
 
----
-![AeroCLI UI](./image/SS.png)
+---<img src="./image/SS.png" alt="AeroCLI UI" width="100%" />\
+
 
 ## 📁 Repository Structure
 
