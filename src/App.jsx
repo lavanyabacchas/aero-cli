@@ -7,15 +7,15 @@ import { LocalHistoryViewer } from './components/LocalHistoryViewer';
 import { ArtifactPanel } from './components/ArtifactPanel';
 import { SafetyConfirmationModal } from './components/SafetyConfirmationModal';
 import { agentEngine } from './services/agentEngine';
-import { Terminal, Database, FileText, Sparkles, Command, History, Layers } from 'lucide-react';
+import { Terminal, Database, FileText, Sparkles, Command, History } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('CONSOLE'); // 'CONSOLE' | 'DATABASE' | 'HISTORY' | 'ARTIFACTS'
   const [logs, setLogs] = useState([
     'AeroCLI v1.0.0 — Autonomous Terminal-to-Browser Agent Bridge',
-    'Translucent Control Center online. Cursor particle physics enabled everywhere.',
-    'Click top tabs to switch between Live Control, SQLite Session DB, Local History, and Artifact Inspector.',
-    'Type a task prompt or click a quick preset to execute real file writing & verification.'
+    'Interactive Localhost Control Center online.',
+    'Move your cursor around to interact with the particle background mesh floating behind text.',
+    'Type a task prompt or click a quick preset to launch agent execution.'
   ]);
 
   const [pendingPrompt, setPendingPrompt] = useState(null);
@@ -78,43 +78,44 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505]/90 text-zinc-100 relative font-sans p-6 sm:p-8 space-y-8">
+    <div className="min-h-screen text-zinc-100 relative font-sans p-4 sm:p-6 space-y-2">
       {/* Granular Safety Confirmation Pop-up Modal */}
       <SafetyConfirmationModal
         pendingPrompt={pendingPrompt}
         onResolvePrompt={handleResolvePrompt}
       />
 
-      {/* Interactive Translucent Canvas Particle Background */}
+      {/* Fixed Fullscreen Particle Canvas Background */}
       <ParticleBackground />
 
-      <div className="relative z-10 max-w-7xl mx-auto space-y-8">
+      {/* Main Content Overlay directly floating on particles from top of screen */}
+      <div className="relative z-10 max-w-7xl mx-auto space-y-3">
         {/* Header Bar */}
-        <header className="glass-panel rounded-xl p-5 flex flex-col md:flex-row items-center justify-between gap-6 border border-zinc-800 shadow-2xl">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-lg bg-white text-black flex items-center justify-center font-bold font-mono shadow-xl shrink-0">
-              <Command className="w-6 h-6" />
+        <header className="glass-panel p-4 flex flex-col md:flex-row items-center justify-between gap-4 border border-zinc-800/80 shadow-2xl">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-md bg-white text-black flex items-center justify-center font-bold font-mono shadow-md shrink-0">
+              <Command className="w-5 h-5" />
             </div>
-            <div>
-              <h1 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+            <div className="space-y-2px">
+              <h1 className="text-lg font-bold tracking-tight text-white flex items-center gap-2">
                 AeroCLI
-                <span className="text-xs font-mono font-normal px-2.5 py-0.5 bg-zinc-900 border border-zinc-700 text-zinc-300 rounded-md">
+                <span className="text-xs font-mono font-normal px-2 py-0.5 bg-zinc-900/90 border border-zinc-700 text-zinc-300 rounded">
                   v1.0.0
                 </span>
               </h1>
-              <p className="text-xs text-zinc-400 mt-0.5">
+              <p className="text-xs text-zinc-400">
                 Autonomous Terminal-to-Browser Agent Bridge
               </p>
             </div>
           </div>
 
-          {/* Working Top Navigation Pills */}
-          <nav className="flex items-center gap-2 bg-zinc-950/80 p-1.5 rounded-lg border border-zinc-800 font-mono text-xs">
+          {/* Working Navigation Pills */}
+          <nav className="flex items-center gap-2px bg-zinc-950/80 p-1 rounded-md border border-zinc-800/80 font-mono text-xs">
             <button
               onClick={() => setActiveTab('CONSOLE')}
-              className={`px-3.5 py-2 rounded-md transition-all flex items-center gap-2 ${
+              className={`px-3 py-1.5 rounded transition-all flex items-center gap-1.5 ${
                 activeTab === 'CONSOLE'
-                  ? 'bg-white text-black font-bold shadow-lg scale-[1.02]'
+                  ? 'bg-white text-black font-bold shadow'
                   : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
               }`}
             >
@@ -124,21 +125,21 @@ export default function App() {
 
             <button
               onClick={() => setActiveTab('DATABASE')}
-              className={`px-3.5 py-2 rounded-md transition-all flex items-center gap-2 ${
+              className={`px-3 py-1.5 rounded transition-all flex items-center gap-1.5 ${
                 activeTab === 'DATABASE'
-                  ? 'bg-white text-black font-bold shadow-lg scale-[1.02]'
+                  ? 'bg-white text-black font-bold shadow'
                   : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
               }`}
             >
-              <Database className="w-3.5 h-3.5 text-zinc-400" />
+              <Database className="w-3.5 h-3.5" />
               💾 SQLite Session DB
             </button>
 
             <button
               onClick={() => setActiveTab('HISTORY')}
-              className={`px-3.5 py-2 rounded-md transition-all flex items-center gap-2 ${
+              className={`px-3 py-1.5 rounded transition-all flex items-center gap-1.5 ${
                 activeTab === 'HISTORY'
-                  ? 'bg-white text-black font-bold shadow-lg scale-[1.02]'
+                  ? 'bg-white text-black font-bold shadow'
                   : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
               }`}
             >
@@ -148,9 +149,9 @@ export default function App() {
 
             <button
               onClick={() => setActiveTab('ARTIFACTS')}
-              className={`px-3.5 py-2 rounded-md transition-all flex items-center gap-2 ${
+              className={`px-3 py-1.5 rounded transition-all flex items-center gap-1.5 ${
                 activeTab === 'ARTIFACTS'
-                  ? 'bg-white text-black font-bold shadow-lg scale-[1.02]'
+                  ? 'bg-white text-black font-bold shadow'
                   : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
               }`}
             >
@@ -160,10 +161,10 @@ export default function App() {
           </nav>
         </header>
 
-        {/* Quick Task Presets with 2px/8px Spacing */}
-        <div className="glass-panel rounded-lg p-4 border border-zinc-800/80 flex flex-wrap items-center gap-3 font-mono text-xs">
-          <span className="text-zinc-400 font-semibold flex items-center gap-1.5 pr-2 border-r border-zinc-800">
-            <Sparkles className="w-4 h-4 text-amber-400" />
+        {/* Quick Task Presets with 2px gaps */}
+        <div className="glass-panel p-3 border border-zinc-800/80 flex flex-wrap items-center gap-2 font-mono text-xs">
+          <span className="text-zinc-400 font-semibold flex items-center gap-1 pr-2 border-r border-zinc-800">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             Quick Presets:
           </span>
           {presets.map((p, idx) => (
@@ -171,17 +172,17 @@ export default function App() {
               key={idx}
               disabled={isExecuting}
               onClick={() => handleRunTask(p)}
-              className="px-3 py-1.5 rounded-md bg-zinc-900/90 border border-zinc-700/80 text-zinc-200 hover:border-white hover:text-white transition-all disabled:opacity-40 shadow-sm"
+              className="px-2.5 py-1 rounded bg-zinc-900/80 border border-zinc-800 text-zinc-300 hover:border-white hover:text-white transition-all disabled:opacity-40"
             >
               "{p}"
             </button>
           ))}
         </div>
 
-        {/* View Switching Container with Spacious 24px Gaps */}
-        <main className="space-y-8">
+        {/* Main Workspace Panels floating directly over particles */}
+        <main className="space-y-4">
           {activeTab === 'CONSOLE' && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <TerminalView
                 logs={logs}
                 pendingPrompt={pendingPrompt}

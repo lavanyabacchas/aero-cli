@@ -23,10 +23,9 @@ export const ParticleBackground = () => {
     const mouse = {
       x: -1000,
       y: -1000,
-      radius: 180
+      radius: 160
     };
 
-    // Global mouse listener anywhere on window
     const handleMouseMove = (e) => {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
@@ -40,20 +39,17 @@ export const ParticleBackground = () => {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseleave', handleMouseLeave);
 
-    // Particle Setup
     let particles = [];
-    const particleCount = Math.min(Math.floor((width * height) / 9000), 110);
+    const particleCount = Math.min(Math.floor((width * height) / 9000), 100);
 
     class Particle {
       constructor() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.baseX = this.x;
-        this.baseY = this.y;
-        this.size = Math.random() * 2.5 + 1.2;
+        this.size = Math.random() * 2.5 + 1;
         this.vx = (Math.random() - 0.5) * 1.2;
         this.vy = (Math.random() - 0.5) * 1.2;
-        this.density = Math.random() * 30 + 15;
+        this.density = Math.random() * 25 + 12;
         this.alpha = Math.random() * 0.6 + 0.3;
       }
 
@@ -66,15 +62,12 @@ export const ParticleBackground = () => {
       }
 
       update() {
-        // Normal drift
         this.x += this.vx;
         this.y += this.vy;
 
-        // Bounce at edges
         if (this.x < 0 || this.x > width) this.vx = -this.vx;
         if (this.y < 0 || this.y > height) this.vy = -this.vy;
 
-        // Mouse Physics (Repulsion force everywhere on screen)
         const dx = mouse.x - this.x;
         const dy = mouse.y - this.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
@@ -102,19 +95,17 @@ export const ParticleBackground = () => {
 
     initParticles();
 
-    // Render loop
     const animate = () => {
       ctx.clearRect(0, 0, width, height);
 
-      // Connect near particles
       for (let a = 0; a < particles.length; a++) {
         for (let b = a + 1; b < particles.length; b++) {
           const dx = particles[a].x - particles[b].x;
           const dy = particles[a].y - particles[b].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 140) {
-            const opacity = 1 - dist / 140;
+          if (dist < 130) {
+            const opacity = 1 - dist / 130;
             ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.18})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
@@ -125,7 +116,6 @@ export const ParticleBackground = () => {
         }
       }
 
-      // Draw mouse cursor glow aura
       if (mouse.x > 0 && mouse.y > 0) {
         const gradient = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, mouse.radius);
         gradient.addColorStop(0, 'rgba(255, 255, 255, 0.08)');
@@ -136,7 +126,6 @@ export const ParticleBackground = () => {
         ctx.fill();
       }
 
-      // Draw and update particles
       particles.forEach((particle) => {
         particle.update();
         particle.draw();
@@ -158,7 +147,15 @@ export const ParticleBackground = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        zIndex: 0,
+        pointerEvents: 'none'
+      }}
     />
   );
 };
