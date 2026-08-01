@@ -50,7 +50,7 @@ export const TerminalView = ({
       </div>
 
       {/* Terminal Content Screen */}
-      <div className="flex-1 bg-[#050506] p-4 font-mono text-xs leading-relaxed overflow-y-auto space-y-1 text-zinc-300">
+      <div className="flex-1 bg-black/40 backdrop-blur-sm p-4 font-mono text-xs leading-relaxed overflow-y-auto space-y-1 text-zinc-200">
         <div className="text-zinc-500 pb-2 border-b border-zinc-900 mb-2">
           AeroCLI v1.0.0 — Autonomous Terminal-to-Browser Agent Bridge
           <br />

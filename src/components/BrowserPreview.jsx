@@ -35,9 +35,9 @@ export const BrowserPreview = ({ currentStep, results, isExecuting }) => {
       </div>
 
       {/* Browser Live Viewport */}
-      <div className="flex-1 bg-[#09090b] relative p-6 flex flex-col justify-between overflow-hidden">
+      <div className="flex-1 bg-black/40 backdrop-blur-sm relative p-6 flex flex-col justify-between overflow-hidden">
         {/* Simulated Web Application Display */}
-        <div className="w-full h-full border border-zinc-800 rounded-md bg-zinc-950 p-5 flex flex-col justify-between relative shadow-inner">
+        <div className="w-full h-full border border-zinc-800/80 rounded-md bg-zinc-950/40 p-5 flex flex-col justify-between relative shadow-inner">
           {/* Header Bar */}
           <div className="flex justify-between items-center pb-4 border-b border-zinc-800">
             <div className="font-bold text-sm tracking-tight text-white flex items-center gap-2">
